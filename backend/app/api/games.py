@@ -18,7 +18,7 @@ from ..domain.errors import (
 from ..domain.models import Game, Player
 from ..domain.roles import ROLE_INFO
 from ..state import game_service, ws_manager
-from .deps import get_current_player
+from .deps import get_current_host, get_current_player
 
 router = APIRouter(prefix="/api/games", tags=["games"])
 
@@ -41,24 +41,20 @@ def _public_state(game: Game) -> schemas.StateResponse:
     return schemas.StateResponse(
         code=game.code,
         status=game.status,
-        players=[
-            schemas.PlayerPublic(id=p.id, pseudo=p.pseudo, is_host=p.is_host)
-            for p in game.players.values()
-        ],
+        players=[schemas.PlayerPublic(id=p.id, pseudo=p.pseudo) for p in game.players.values()],
         roles_config=game.roles_config,
         min_players=MIN_PLAYERS,
     )
 
 
 @router.post("", response_model=schemas.AuthResponse)
-def create_game(body: schemas.CreateGameRequest) -> schemas.AuthResponse:
-    try:
-        game, host = game_service.create_game(body.pseudo)
-    except DomainError as exc:
-        raise _as_http_error(exc) from exc
-
-    token = issue_token(game.code, host.id)
-    return schemas.AuthResponse(token=token, player_id=host.id, code=game.code)
+def create_game() -> schemas.AuthResponse:
+    """Creates a game for the host device (the PC running this page). The
+    host never becomes a player — only devices that later call /join do.
+    """
+    game, host_id = game_service.create_game()
+    token = issue_token(game.code, host_id)
+    return schemas.AuthResponse(token=token, id=host_id, code=game.code)
 
 
 @router.post("/{code}/join", response_model=schemas.AuthResponse)
@@ -70,7 +66,7 @@ async def join_game(code: str, body: schemas.JoinGameRequest) -> schemas.AuthRes
 
     token = issue_token(game.code, player.id)
     await ws_manager.broadcast(game.code, "player_joined", _public_state(game).model_dump(mode="json"))
-    return schemas.AuthResponse(token=token, player_id=player.id, code=game.code)
+    return schemas.AuthResponse(token=token, id=player.id, code=game.code)
 
 
 @router.get("/{code}/state", response_model=schemas.StateResponse)
@@ -85,11 +81,10 @@ def get_state(code: str) -> schemas.StateResponse:
 @router.patch("/{code}/roles", response_model=schemas.StateResponse)
 async def update_roles(
     body: schemas.RolesConfigRequest,
-    current: tuple[Game, Player] = Depends(get_current_player),
+    game: Game = Depends(get_current_host),
 ) -> schemas.StateResponse:
-    game, player = current
     try:
-        game = game_service.update_roles_config(game.code, player.id, body.config)
+        game = game_service.update_roles_config(game.code, game.host_id, body.config)
     except DomainError as exc:
         raise _as_http_error(exc) from exc
 
@@ -99,12 +94,9 @@ async def update_roles(
 
 
 @router.post("/{code}/start", response_model=schemas.StateResponse)
-async def start_game(
-    current: tuple[Game, Player] = Depends(get_current_player),
-) -> schemas.StateResponse:
-    game, player = current
+async def start_game(game: Game = Depends(get_current_host)) -> schemas.StateResponse:
     try:
-        game = game_service.start_game(game.code, player.id)
+        game = game_service.start_game(game.code, game.host_id)
     except DomainError as exc:
         raise _as_http_error(exc) from exc
 
@@ -128,7 +120,6 @@ def get_me(current: tuple[Game, Player] = Depends(get_current_player)) -> schema
     return schemas.MeResponse(
         player_id=player.id,
         pseudo=player.pseudo,
-        is_host=player.is_host,
         status=game.status,
         role=role_info,
     )

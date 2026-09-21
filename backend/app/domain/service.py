@@ -28,18 +28,16 @@ class GameService:
         self._games: dict[str, Game] = {}
         self._nao = nao_controller
 
-    def create_game(self, host_pseudo: str) -> tuple[Game, Player]:
-        pseudo = host_pseudo.strip()
-        if not pseudo:
-            raise InvalidPseudoError("Le pseudo ne peut pas être vide.")
-
+    def create_game(self) -> tuple[Game, str]:
+        """Creates a game for a host device (the PC). The host is never a
+        player: it never receives a role and doesn't count towards MIN_PLAYERS.
+        Only players who `join_game` afterwards (the phones) play.
+        """
         game = Game.create()
-        host = Player.create(pseudo, is_host=True)
-        game.players[host.id] = host
-        game.roles_config = suggest_role_config(1)
+        game.roles_config = suggest_role_config(0)
         self._games[game.code] = game
         self._nao.announce_game_created(game.code)
-        return game, host
+        return game, game.host_id
 
     def join_game(self, code: str, pseudo: str) -> tuple[Game, Player]:
         game = self._get_game(code)
@@ -58,9 +56,9 @@ class GameService:
             game.roles_config = suggest_role_config(len(game.players))
         return game, player
 
-    def update_roles_config(self, code: str, player_id: str, config: dict[Role, int]) -> Game:
+    def update_roles_config(self, code: str, caller_id: str, config: dict[Role, int]) -> Game:
         game = self._get_game(code)
-        self._require_host(game, player_id)
+        self._require_host(game, caller_id)
         if game.status != GameStatus.LOBBY:
             raise InvalidGameStateError("La partie a déjà démarré.")
         if any(count < 0 for count in config.values()):
@@ -70,9 +68,9 @@ class GameService:
         game.roles_config_customized = True
         return game
 
-    def start_game(self, code: str, player_id: str) -> Game:
+    def start_game(self, code: str, caller_id: str) -> Game:
         game = self._get_game(code)
-        self._require_host(game, player_id)
+        self._require_host(game, caller_id)
         if game.status != GameStatus.LOBBY:
             raise InvalidGameStateError("La partie a déjà démarré.")
         if len(game.players) < MIN_PLAYERS:
@@ -110,15 +108,17 @@ class GameService:
             raise PlayerNotFoundError("Joueur introuvable dans cette partie.")
         return game, player
 
+    def require_host(self, code: str, caller_id: str) -> Game:
+        game = self._get_game(code)
+        self._require_host(game, caller_id)
+        return game
+
     def _get_game(self, code: str) -> Game:
         game = self._games.get(code.upper())
         if game is None:
             raise GameNotFoundError(f"Aucune partie avec le code '{code}'.")
         return game
 
-    def _require_host(self, game: Game, player_id: str) -> None:
-        player = game.players.get(player_id)
-        if player is None:
-            raise PlayerNotFoundError("Joueur introuvable dans cette partie.")
-        if not player.is_host:
+    def _require_host(self, game: Game, caller_id: str) -> None:
+        if caller_id != game.host_id:
             raise NotHostError("Seul l'hôte peut effectuer cette action.")

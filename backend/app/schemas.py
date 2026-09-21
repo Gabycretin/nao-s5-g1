@@ -5,17 +5,13 @@ from pydantic import BaseModel, Field
 from .domain.roles import Role
 
 
-class CreateGameRequest(BaseModel):
-    pseudo: str = Field(min_length=1, max_length=30)
-
-
 class JoinGameRequest(BaseModel):
     pseudo: str = Field(min_length=1, max_length=30)
 
 
 class AuthResponse(BaseModel):
     token: str
-    player_id: str
+    id: str
     code: str
 
 
@@ -26,7 +22,6 @@ class RolesConfigRequest(BaseModel):
 class PlayerPublic(BaseModel):
     id: str
     pseudo: str
-    is_host: bool
 
 
 class StateResponse(BaseModel):
@@ -47,6 +42,5 @@ class RoleInfo(BaseModel):
 class MeResponse(BaseModel):
     player_id: str
     pseudo: str
-    is_host: bool
     status: str
     role: RoleInfo | None = None

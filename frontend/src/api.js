@@ -3,11 +3,13 @@ import { API_BASE_URL } from "./config";
 const TOKEN_KEY = "nao-lg-token";
 const CODE_KEY = "nao-lg-code";
 const PLAYER_KEY = "nao-lg-player-id";
+const IS_HOST_KEY = "nao-lg-is-host";
 
-export function saveSession({ token, code, playerId }) {
+export function saveSession({ token, code, playerId, isHost }) {
   localStorage.setItem(TOKEN_KEY, token);
   localStorage.setItem(CODE_KEY, code);
   localStorage.setItem(PLAYER_KEY, playerId);
+  localStorage.setItem(IS_HOST_KEY, isHost ? "1" : "0");
 }
 
 export function loadSession() {
@@ -15,13 +17,14 @@ export function loadSession() {
   const code = localStorage.getItem(CODE_KEY);
   const playerId = localStorage.getItem(PLAYER_KEY);
   if (!token || !code || !playerId) return null;
-  return { token, code, playerId };
+  return { token, code, playerId, isHost: localStorage.getItem(IS_HOST_KEY) === "1" };
 }
 
 export function clearSession() {
   localStorage.removeItem(TOKEN_KEY);
   localStorage.removeItem(CODE_KEY);
   localStorage.removeItem(PLAYER_KEY);
+  localStorage.removeItem(IS_HOST_KEY);
 }
 
 async function request(path, { method = "GET", body, token } = {}) {
@@ -42,8 +45,8 @@ async function request(path, { method = "GET", body, token } = {}) {
   return data;
 }
 
-export function createGame(pseudo) {
-  return request("/api/games", { method: "POST", body: { pseudo } });
+export function createGame() {
+  return request("/api/games", { method: "POST" });
 }
 
 export function joinGame(code, pseudo) {

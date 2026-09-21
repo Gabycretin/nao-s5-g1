@@ -24,18 +24,18 @@ def generate_game_code() -> str:
 class Player:
     id: str
     pseudo: str
-    is_host: bool = False
     role: Role | None = None
 
     @staticmethod
-    def create(pseudo: str, is_host: bool = False) -> "Player":
-        return Player(id=uuid.uuid4().hex, pseudo=pseudo, is_host=is_host)
+    def create(pseudo: str) -> "Player":
+        return Player(id=uuid.uuid4().hex, pseudo=pseudo)
 
 
 @dataclass
 class Game:
     id: str
     code: str
+    host_id: str
     status: GameStatus = GameStatus.LOBBY
     players: dict[str, Player] = field(default_factory=dict)
     roles_config: dict[Role, int] = field(default_factory=dict)
@@ -44,7 +44,7 @@ class Game:
 
     @staticmethod
     def create() -> "Game":
-        return Game(id=uuid.uuid4().hex, code=generate_game_code())
+        return Game(id=uuid.uuid4().hex, code=generate_game_code(), host_id=uuid.uuid4().hex)
 
     def pseudo_taken(self, pseudo: str) -> bool:
         return any(p.pseudo.lower() == pseudo.lower() for p in self.players.values())
