@@ -216,3 +216,14 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Export & build folders
+/export/
+/build/
+/dist/
+
+# Cache
+*~
+*.bak
+*.tmp
+*.pyc
