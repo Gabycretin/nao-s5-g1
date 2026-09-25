@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 900 500" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="backend-er-title backend-er-desc">
+      <title id="backend-er-title">Modèle de données backend — Game, Player, Role</title>
+      <desc id="backend-er-desc">Diagramme entité-relation montrant l'entité racine Game contenant plusieurs Player (1:N), et l'énumération Role référencée en tant que type par Game.roles_config et Player.role — sans relation directe entre Game.host_id et Player.</desc>
+      <defs>
+<style>@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&amp;family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500;600&amp;display=swap');</style>
+        <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#4f5d75"/></marker>
+      </defs>
+
+      <rect width="100%" height="100%" fill="#f5f5f5"/>
+
+      <!-- ================= RELATIONSHIPS (drawn first) ================= -->
+
+      <!-- Game -> Player : 1:N, real relationship (solid) -->
+      <line x1="380" y1="190" x2="460" y2="190" stroke="#4f5d75" stroke-width="1"/>
+      <!-- Game -> Role : type reference, not a real relationship (dashed) -->
+      <line x1="380" y1="315" x2="460" y2="315" stroke="#4f5d75" stroke-width="1" stroke-dasharray="4,3"/>
+      <!-- Player -> Role : type reference (dashed) -->
+      <line x1="560" y1="240" x2="560" y2="260" stroke="#4f5d75" stroke-width="1" stroke-dasharray="4,3"/>
+
+      <!-- Cardinality: Game side -->
+      <rect x="386" y="182" width="12" height="12" rx="2" fill="#f5f5f5"/>
+      <text x="392" y="192" fill="#4f5d75" font-size="10" font-family="'Geist Mono', monospace" text-anchor="middle" font-weight="600">1</text>
+      <!-- Cardinality: Player side -->
+      <rect x="442" y="182" width="16" height="12" rx="2" fill="#f5f5f5"/>
+      <text x="450" y="192" fill="#4f5d75" font-size="10" font-family="'Geist Mono', monospace" text-anchor="middle" font-weight="600">N</text>
+
+      <!-- Relationship label: Game-Player (6-10px above the y=190 line) -->
+      <rect x="392" y="168" width="56" height="14" rx="2" fill="#f5f5f5"/>
+      <text x="420" y="178" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.10em">CONTIENT</text>
+
+      <!-- Relationship label: Game-Role (type ref), 10px above the y=315 line -->
+      <rect x="392" y="291" width="56" height="14" rx="2" fill="#f5f5f5"/>
+      <text x="420" y="301" fill="#7a8399" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.10em">TYPE</text>
+
+      <!-- Relationship label: Player-Role (type ref) — vertical segment, label to the side -->
+      <rect x="568" y="244" width="36" height="12" rx="2" fill="#f5f5f5"/>
+      <text x="586" y="253" fill="#7a8399" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.10em">TYPE</text>
+
+      <!-- ================= ANNOTATION CALLOUT ================= -->
+      <text x="860" y="130" fill="#2d3142" font-size="14" font-style="italic" font-family="'Instrument Serif', serif" text-anchor="end">host_id n'est jamais un Player</text>
+      <path d="M 800 138 Q 550 160 300 200" fill="none" stroke="#2d3142" stroke-opacity="0.40" stroke-width="1" stroke-dasharray="4,3"/>
+      <circle cx="300" cy="200" r="2" fill="#2d3142"/>
+
+      <!-- ================= ENTITY: Game (aggregate root, focal) ================= -->
+      <rect x="60" y="100" width="320" height="240" rx="6" fill="#eb6c36" fill-opacity="0.04" stroke="#eb6c36" stroke-width="1"/>
+      <rect x="60" y="100" width="320" height="40" rx="6" fill="#eb6c36" fill-opacity="0.10" stroke="none"/>
+      <rect x="60" y="132" width="320" height="8" fill="#eb6c36" fill-opacity="0.10"/>
+      <line x1="60" y1="140" x2="380" y2="140" stroke="#eb6c36" stroke-opacity="0.40" stroke-width="1"/>
+      <text x="76" y="116" fill="#eb6c36" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.14em">ENTITY · AGGREGATE ROOT</text>
+      <text x="76" y="132" fill="#2d3142" font-size="14" font-weight="600" font-family="'Geist', sans-serif">Game</text>
+
+      <text x="76" y="160" fill="#2d3142" font-size="10" font-family="'Geist Mono', monospace"># id</text>
+      <text x="364" y="160" fill="#4f5d75" font-size="10" font-family="'Geist Mono', monospace" text-anchor="end">str (uuid4)</text>
+
+      <text x="76" y="180" fill="#2d3142" font-size="10" font-family="'Geist Mono', monospace">code</text>
+      <text x="364" y="180" fill="#4f5d75" font-size="10" font-family="'Geist Mono', monospace" text-anchor="end">str · unique (6)</text>
+
+      <text x="76" y="200" fill="#2d3142" font-size="10" font-family="'Geist Mono', monospace">host_id</text>
+      <text x="364" y="200" fill="#4f5d75" font-size="10" font-family="'Geist Mono', monospace" text-anchor="end">str</text>
+
+      <text x="76" y="220" fill="#2d3142" font-size="10" font-family="'Geist Mono', monospace">status</text>
+      <text x="364" y="220" fill="#4f5d75" font-size="10" font-family="'Geist Mono', monospace" text-anchor="end">GameStatus</text>
+
+      <text x="76" y="240" fill="#2d3142" font-size="10" font-family="'Geist Mono', monospace">players</text>
+      <text x="364" y="240" fill="#4f5d75" font-size="10" font-family="'Geist Mono', monospace" text-anchor="end">dict[str, Player]</text>
+
+      <text x="76" y="260" fill="#2d3142" font-size="10" font-family="'Geist Mono', monospace">roles_config</text>
+      <text x="364" y="260" fill="#4f5d75" font-size="10" font-family="'Geist Mono', monospace" text-anchor="end">dict[Role, int]</text>
+
+      <text x="76" y="280" fill="#2d3142" font-size="10" font-family="'Geist Mono', monospace">roles_config_customized</text>
+      <text x="364" y="280" fill="#4f5d75" font-size="10" font-family="'Geist Mono', monospace" text-anchor="end">bool</text>
+
+      <text x="76" y="300" fill="#2d3142" font-size="10" font-family="'Geist Mono', monospace">created_at</text>
+      <text x="364" y="300" fill="#4f5d75" font-size="10" font-family="'Geist Mono', monospace" text-anchor="end">datetime</text>
+
+      <!-- ================= ENTITY: Player ================= -->
+      <rect x="460" y="140" width="200" height="100" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <rect x="460" y="140" width="200" height="40" rx="6" fill="#2d3142" fill-opacity="0.04" stroke="none"/>
+      <rect x="460" y="172" width="200" height="8" fill="#2d3142" fill-opacity="0.04"/>
+      <line x1="460" y1="180" x2="660" y2="180" stroke="#2d3142" stroke-opacity="0.22" stroke-width="1"/>
+      <text x="476" y="156" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.14em">ENTITY</text>
+      <text x="476" y="172" fill="#2d3142" font-size="14" font-weight="600" font-family="'Geist', sans-serif">Player</text>
+
+      <text x="476" y="200" fill="#2d3142" font-size="10" font-family="'Geist Mono', monospace"># id</text>
+      <text x="644" y="200" fill="#4f5d75" font-size="10" font-family="'Geist Mono', monospace" text-anchor="end">str (uuid4)</text>
+
+      <text x="476" y="220" fill="#2d3142" font-size="10" font-family="'Geist Mono', monospace">pseudo</text>
+      <text x="644" y="220" fill="#4f5d75" font-size="10" font-family="'Geist Mono', monospace" text-anchor="end">str · unique*</text>
+
+      <text x="476" y="240" fill="#2d3142" font-size="10" font-family="'Geist Mono', monospace">→ role</text>
+      <text x="644" y="240" fill="#4f5d75" font-size="10" font-family="'Geist Mono', monospace" text-anchor="end">Role | None</text>
+
+      <!-- ================= ENTITY: Role (enum reference) ================= -->
+      <rect x="460" y="260" width="200" height="130" rx="6" fill="#2d3142" fill-opacity="0.04" stroke="#4f5d75" stroke-width="1" stroke-dasharray="4,3"/>
+      <rect x="460" y="260" width="200" height="40" rx="6" fill="#2d3142" fill-opacity="0.06" stroke="none"/>
+      <rect x="460" y="292" width="200" height="8" fill="#2d3142" fill-opacity="0.06"/>
+      <line x1="460" y1="300" x2="660" y2="300" stroke="#2d3142" stroke-opacity="0.22" stroke-width="1"/>
+      <text x="476" y="276" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.14em">ENUM</text>
+      <text x="476" y="292" fill="#2d3142" font-size="14" font-weight="600" font-family="'Geist', sans-serif">Role</text>
+
+      <text x="476" y="320" fill="#2d3142" font-size="10" font-family="'Geist Mono', monospace">LOUP_GAROU</text>
+      <text x="644" y="320" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="end">camp=LOUPS</text>
+
+      <text x="476" y="340" fill="#2d3142" font-size="10" font-family="'Geist Mono', monospace">VILLAGEOIS</text>
+      <text x="644" y="340" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="end">camp=VILLAGE</text>
+
+      <text x="476" y="360" fill="#2d3142" font-size="10" font-family="'Geist Mono', monospace">VOYANTE</text>
+      <text x="644" y="360" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="end">camp=VILLAGE</text>
+
+      <text x="476" y="380" fill="#2d3142" font-size="10" font-family="'Geist Mono', monospace">SORCIERE</text>
+      <text x="644" y="380" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="end">camp=VILLAGE</text>
+
+      <!-- ================= LEGEND ================= -->
+      <line x1="40" y1="424" x2="860" y2="424" stroke="#2d3142" stroke-opacity="0.10" stroke-width="0.8"/>
+      <text x="40" y="440" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.18em">LEGENDE</text>
+
+      <rect x="40" y="456" width="14" height="10" rx="2" fill="#eb6c36" fill-opacity="0.04" stroke="#eb6c36" stroke-width="1"/>
+      <text x="60" y="464" fill="#4f5d75" font-size="8.5" font-family="'Geist', sans-serif">Racine (aggregate root)</text>
+
+      <rect x="216" y="456" width="14" height="10" rx="2" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <text x="236" y="464" fill="#4f5d75" font-size="8.5" font-family="'Geist', sans-serif">Entité</text>
+
+      <rect x="304" y="456" width="14" height="10" rx="2" fill="#2d3142" fill-opacity="0.04" stroke="#4f5d75" stroke-width="1" stroke-dasharray="3,2"/>
+      <text x="324" y="464" fill="#4f5d75" font-size="8.5" font-family="'Geist', sans-serif">Enum (référence de type)</text>
+
+      <text x="480" y="464" fill="#2d3142" font-size="10" font-family="'Geist Mono', monospace" font-weight="600">#</text>
+      <text x="496" y="464" fill="#4f5d75" font-size="8.5" font-family="'Geist', sans-serif">Clé primaire</text>
+
+      <text x="588" y="464" fill="#2d3142" font-size="10" font-family="'Geist Mono', monospace" font-weight="600">→</text>
+      <text x="604" y="464" fill="#4f5d75" font-size="8.5" font-family="'Geist', sans-serif">Référence</text>
+
+      <text x="692" y="464" fill="#4f5d75" font-size="10" font-family="'Geist Mono', monospace" font-weight="600">1 / N</text>
+      <text x="724" y="464" fill="#4f5d75" font-size="8.5" font-family="'Geist', sans-serif">Cardinalité</text>
+
+      <text x="40" y="484" fill="#7a8399" font-size="8" font-family="'Geist Mono', monospace">* unique au sein d'une même partie, pas globalement</text>
+    </svg>

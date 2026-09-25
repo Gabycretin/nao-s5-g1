@@ -6,15 +6,32 @@ Tout est stocké **en mémoire** (aucune base de données) — les parties dispa
 
 ## Diagrammes (`docs/`)
 
-Pour une vue d'ensemble visuelle avant de lire le code :
+Pour une vue d'ensemble visuelle avant de lire le code. Chaque image est cliquable vers la version HTML interactive (survol des éléments, zoom navigateur).
 
-- [`docs/backend-architecture-detailed.html`](../docs/backend-architecture-detailed.html) — carte complète des modules (un nœud par fichier), niveau ingénieur.
-- [`docs/backend-architecture.html`](../docs/backend-architecture.html) — version simplifiée (vue d'ensemble rapide).
-- [`docs/backend-sequence.html`](../docs/backend-sequence.html) — flux temporel création → rôle secret, avec NAO et le WebSocket.
-- [`docs/backend-state.html`](../docs/backend-state.html) — cycle de vie d'une partie (`LOBBY` → `ROLES_ASSIGNED`) et ses gardes.
-- [`docs/backend-er.html`](../docs/backend-er.html) — modèle de données (`Game`, `Player`, `Role`).
+#### Architecture détaillée (niveau ingénieur)
 
-Ouvrir ces fichiers directement dans un navigateur (pas de serveur requis).
+[![Architecture détaillée](../docs/backend-architecture-detailed.svg)](../docs/backend-architecture-detailed.html)
+
+#### Séquence — création → rôle secret
+
+[![Séquence](../docs/backend-sequence.svg)](../docs/backend-sequence.html)
+
+#### Machine à états — cycle de vie d'une partie
+
+[![Machine à états](../docs/backend-state.svg)](../docs/backend-state.html)
+
+#### Modèle de données (ER)
+
+[![Modèle de données](../docs/backend-er.svg)](../docs/backend-er.html)
+
+<details>
+<summary>Architecture simplifiée (vue d'ensemble rapide)</summary>
+
+[![Architecture simplifiée](../docs/backend-architecture.svg)](../docs/backend-architecture.html)
+
+</details>
+
+> Les SVG ci-dessus s'affichent avec une police de secours sur GitHub (qui bloque le chargement de polices externes par sécurité) — ouvrir le `.html` correspondant dans un navigateur pour le rendu avec les bonnes polices (Geist / Instrument Serif).
 
 ### Hôte vs joueurs
 
