@@ -224,3 +224,5 @@ frontend/dist/
 .vite/
 npm-debug.log*
 
+#IDE config files
+.vscode
